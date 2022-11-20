@@ -32,41 +32,31 @@ type TokenResponse struct {
 
 func GetToken() {
 	if Token == "" || RefreshToken == "" || time.Now().After(ExpireTime) {
-		InitToken()
+		fetchToken("INIT")
 	} else {
-		TokenRefresh()
+		fetchToken("REFRESH")
 	}
 }
 
-func InitToken() {
+func fetchToken(action string) {
 	method := "GET"
 	body := []byte(``)
-	req, _ := http.NewRequest(method, os.Getenv("HOST_URL")+"/v1.0/token?grant_type=1", bytes.NewReader(body))
 
-	utils.BuildHeader(req, body, Token)
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Println(err)
-		return
+	var url string
+	if action == "INIT" {
+		url = fmt.Sprintf("%v/v1.0/token?grant_type=1", os.Getenv("HOST_URL"))
+	} else {
+		url = fmt.Sprintf("%v/v1.0/token/%v", os.Getenv("HOST_URL"), RefreshToken)
 	}
-	defer resp.Body.Close()
-	bs, _ := io.ReadAll(resp.Body)
-	ret := TokenResponse{}
-	json.Unmarshal(bs, &ret)
-	log.Println("resp:", string(bs))
 
-	if ret.Result.AccessToken != "" && ret.Success {
-		Token = ret.Result.AccessToken
-		RefreshToken = ret.Result.RefreshToken
-		ExpireTime = time.Now().Add(time.Second * time.Duration(ret.Result.ExpireTime))
+	req, _ := http.NewRequest(method, url, bytes.NewReader(body))
+
+	if action == "INIT" {
+		utils.BuildHeader(req, body, Token)
+	} else {
+		utils.BuildHeader(req, body, "")
 	}
-}
 
-func TokenRefresh() {
-	method := "GET"
-	body := []byte(``)
-	req, _ := http.NewRequest(method, fmt.Sprintf("%v/v1.0/token/%v", os.Getenv("HOST_URL"), RefreshToken), bytes.NewReader(body))
-	utils.BuildHeader(req, body, RefreshToken)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Println(err)

@@ -18,7 +18,7 @@ func main() {
 	officeHourBegin := 6
 	officeHourEnd := 23
 	intervalCheckOfficeHour := 5
-	intervalCheckSwitch := 1
+	intervalCheckSwitch := 10
 
 	for {
 		if !lib.IsInOfficeHour(officeHourBegin, officeHourEnd) {
@@ -26,6 +26,7 @@ func main() {
 		} else {
 			// get tuya api token
 			lib.GetToken()
+			// get current state
 			currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
 			isCurrentOfficeTempBelowIdealTemp := lib.IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp)
 			// switch office mobile heater by actual office temp

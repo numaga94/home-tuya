@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/nuamga/home-tuya/utils"
+	"github.com/numaga/home-tuya/utils"
 )
 
 var Token string

@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
-	"github.com/nuamga/home-tuya/lib"
+	"github.com/numaga/home-tuya/lib"
 )
 
 func main() {
@@ -18,18 +18,35 @@ func main() {
 	}
 
 	idealOfficeTemp := 28.0
+	officeHourBegin := 6
+	officeHourEnd := 23
 
 	for {
-		// get tuya api token
-		lib.GetToken()
-		// switch office mobile heater by actual office temp
-		if IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp) {
-			lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
+		if !IsInOfficeHour(officeHourBegin, officeHourEnd) {
+			time.Sleep(time.Minute * 5)
 		} else {
-			lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
+			// get tuya api token
+			lib.GetToken()
+			// switch office mobile heater by actual office temp
+			if IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp) {
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
+			} else {
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
+			}
+			// sleep for 10 minutes
+			time.Sleep(time.Minute * 2)
 		}
-		// sleep for 10 minutes
-		time.Sleep(time.Minute * 2)
+	}
+}
+
+func IsInOfficeHour(beginHour int, endHour int) bool {
+	currentHour := time.Now().Hour()
+	if currentHour >= beginHour && currentHour <= endHour {
+		fmt.Println("Current time is in office hour.")
+		return true
+	} else {
+		fmt.Println("Current time is out of the office hour.")
+		return false
 	}
 }
 

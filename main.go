@@ -17,24 +17,32 @@ func main() {
 		fmt.Println("loading env failed")
 	}
 
-	idealOfficeTemp := 28.0
+	idealOfficeTemp := 30.0
 	officeHourBegin := 6
 	officeHourEnd := 23
+	intervalCheckOfficeHour := 5
+	intervalCheckSwitch := 10
 
 	for {
 		if !IsInOfficeHour(officeHourBegin, officeHourEnd) {
-			time.Sleep(time.Minute * 5)
+			time.Sleep(time.Minute * time.Duration(intervalCheckOfficeHour))
 		} else {
 			// get tuya api token
 			lib.GetToken()
+			currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
+			isCurrentOfficeTempBelowIdealTemp := IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp)
 			// switch office mobile heater by actual office temp
-			if IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp) {
+			if isCurrentOfficeTempBelowIdealTemp && !currentDeviceSwitchStatus {
+				fmt.Println("Mobile heater is currently off thus turning it on.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
-			} else {
+			} else if !isCurrentOfficeTempBelowIdealTemp && currentDeviceSwitchStatus {
+				fmt.Println("Mobile heater is currently on thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
+			} else {
+				fmt.Println("Mobile heater is", currentDeviceSwitchStatus)
 			}
 			// sleep for 10 minutes
-			time.Sleep(time.Minute * 2)
+			time.Sleep(time.Minute * time.Duration(intervalCheckSwitch))
 		}
 	}
 }
@@ -57,10 +65,10 @@ func IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp float64) bool {
 	averageTemp := (windowTemp + doorTemp) / 2
 
 	if averageTemp > idealOfficeTemp {
-		fmt.Println("current office temperature is at", averageTemp, "degrees, which is above ideal temperature of", idealOfficeTemp, "degrees. Turn off office mobile heater.")
+		fmt.Println("Current office temperature is at", averageTemp, "degrees, which is above ideal temperature of", idealOfficeTemp, "degrees.")
 		return false
 	} else {
-		fmt.Println("current office temperature is at", averageTemp, "degrees, which is blow ideal temperature of", idealOfficeTemp, "degrees. Turn on office mobile heater.")
+		fmt.Println("Current office temperature is at", averageTemp, "degrees, which is blow ideal temperature of", idealOfficeTemp, "degrees.")
 		return true
 	}
 }

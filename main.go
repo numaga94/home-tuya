@@ -9,6 +9,12 @@ import (
 	"github.com/numaga/home-tuya/lib"
 )
 
+var (
+	Token        string
+	RefreshToken string
+	ExpireTime   int
+)
+
 func main() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("loading env failed")

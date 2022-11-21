@@ -15,10 +15,10 @@ func IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp float64) bool {
 	averageTemp := (windowTemp + doorTemp) / 2
 
 	if averageTemp > idealOfficeTemp {
-		fmt.Println("Current office temperature is at", averageTemp, "degrees, which is above ideal temperature of", idealOfficeTemp, "degrees.")
+		fmt.Println("Current office temperature is at", averageTemp, "degrees, which is above ideal temperature at", idealOfficeTemp, "degrees.")
 		return false
 	} else {
-		fmt.Println("Current office temperature is at", averageTemp, "degrees, which is under ideal temperature of", idealOfficeTemp, "degrees.")
+		fmt.Println("Current office temperature is at", averageTemp, "degrees, which is under ideal temperature at", idealOfficeTemp, "degrees.")
 		return true
 	}
 }

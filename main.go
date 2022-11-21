@@ -25,32 +25,34 @@ func main() {
 
 	go func() {
 		for {
+			// check if current hour in open hours
 			if !lib.InOpenHours(openHoursBegin, openHoursEnd) {
 				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
-			} else {
-				// get tuya api token
-				if err := lib.GetToken(); err != nil {
-					fmt.Println(err.Error())
-					time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
-					continue
-				} else {
-					// get current state
-					currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
-					isCurrentTempBelowIdealTemp := lib.IsCurrentTempUnderIdealTemp(idealTemperature)
-					// switch office mobile heater by actual office temp
-					if isCurrentTempBelowIdealTemp && !currentDeviceSwitchStatus {
-						fmt.Println("Mobile heater is currently off thus turning it on.")
-						lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
-					} else if !isCurrentTempBelowIdealTemp && currentDeviceSwitchStatus {
-						fmt.Println("Mobile heater is currently on thus turning it off.")
-						lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
-					} else {
-						fmt.Println("Mobile heater is", currentDeviceSwitchStatus)
-					}
-					// sleep for 10 minutes
-					time.Sleep(time.Minute * time.Duration(intervalToUpdateSwitchStatus))
-				}
+				continue
 			}
+
+			// get tuya api token
+			if err := lib.GetToken(); err != nil {
+				fmt.Println(err.Error())
+				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
+				continue
+			}
+
+			// get current state
+			currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
+			isCurrentTempBelowIdealTemp := lib.IsCurrentTempUnderIdealTemp(idealTemperature)
+			// switch office mobile heater by actual office temp
+			if isCurrentTempBelowIdealTemp && !currentDeviceSwitchStatus {
+				fmt.Println("Mobile heater is currently off thus turning it on.")
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
+			} else if !isCurrentTempBelowIdealTemp && currentDeviceSwitchStatus {
+				fmt.Println("Mobile heater is currently on thus turning it off.")
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
+			} else {
+				fmt.Println("Mobile heater is", currentDeviceSwitchStatus)
+			}
+			// sleep for 10 minutes
+			time.Sleep(time.Minute * time.Duration(intervalToUpdateSwitchStatus))
 		}
 	}()
 

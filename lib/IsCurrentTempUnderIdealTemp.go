@@ -6,18 +6,12 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
+
+	"github.com/numaga/home-tuya/utils"
 )
 
 func IsCurrentTempUnderIdealTemp(idealOfficeTemp float64) bool {
-	urls := getSensorUrlSlice(os.Getenv("SENSOR_URLS"))
-
-	totalTemperature := 0.0
-	for _, url := range urls {
-		totalTemperature += getDeviceTemperature(url)
-	}
-
-	averageTemp := totalTemperature / float64(len(urls))
+	averageTemp := GetCurrentTemperature()
 
 	if averageTemp > idealOfficeTemp {
 		fmt.Println("Current temperature is at", averageTemp, "degrees, which is above ideal temperature at", idealOfficeTemp, "degrees.")
@@ -28,12 +22,15 @@ func IsCurrentTempUnderIdealTemp(idealOfficeTemp float64) bool {
 	}
 }
 
-func getSensorUrlSlice(urls string) []string {
-	if strings.Contains(urls, ",") {
-		return strings.Split(urls, ",")
-	} else {
-		return []string{urls}
+func GetCurrentTemperature() float64 {
+	urls := utils.GetSensorUrlSlice(os.Getenv("SENSOR_URLS"))
+
+	totalTemperature := 0.0
+	for _, url := range urls {
+		totalTemperature += getDeviceTemperature(url)
 	}
+
+	return totalTemperature / float64(len(urls))
 }
 
 func getDeviceTemperature(url string) float64 {
@@ -44,6 +41,7 @@ func getDeviceTemperature(url string) float64 {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Println(err.Error())
+		return 0.0
 	}
 	defer resp.Body.Close()
 	bs, _ := io.ReadAll(resp.Body)

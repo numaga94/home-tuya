@@ -18,6 +18,7 @@ func main() {
 	}
 
 	idealTemperature, _ := strconv.ParseFloat(os.Getenv("IDEAL_TEMPERATURE"), 64)
+	idealHumidity, _ := strconv.ParseFloat(os.Getenv("IDEAL_HUMIDITY"), 64)
 	openHoursBegin, _ := strconv.Atoi(os.Getenv("OPEN_HOURS_BEGIN"))
 	openHoursEnd, _ := strconv.Atoi(os.Getenv("OPEN_HOURS_END"))
 	intervalToCheckOpenHours, _ := strconv.Atoi(os.Getenv("INTERVAL_TO_CHECK_OPEN_HOURS"))
@@ -56,8 +57,8 @@ func main() {
 		}
 	}()
 
-	http.HandleFunc("/ideal-temperature", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/ideal-temperature" {
+	http.HandleFunc("/ideal-temperature-humidity", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/ideal-temperature-humidity" {
 			responseText := fmt.Sprintln("404, not found.")
 			log.Println(responseText)
 			http.Error(w, responseText, http.StatusNotFound)
@@ -65,7 +66,9 @@ func main() {
 
 		switch r.Method {
 		case "GET":
-			responseText := fmt.Sprintf("current ideal temperature is at %v degrees", idealTemperature)
+			currentTemperature := lib.GetCurrentTemperature()
+			currentHumidity := lib.GetCurrentHumidity()
+			responseText := fmt.Sprintf("ideal: %v degrees + %v %%H and current: %v degrees + %v %%H", idealTemperature, idealHumidity, currentTemperature, currentHumidity)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		case "POST":
@@ -75,9 +78,15 @@ func main() {
 				return
 			}
 			// parse values and reassign them to global variants
-			temp := r.FormValue("temp")
-			idealTemperature, _ = strconv.ParseFloat(temp, 64)
-			responseText := fmt.Sprintf("change ideal temperature to %v degrees", idealTemperature)
+			temp := r.FormValue("temperature")
+			humidity := r.FormValue("humidity")
+			if idealT, err := strconv.ParseFloat(temp, 64); err == nil || idealT == 0.0 {
+				idealTemperature = idealT
+			}
+			if idealH, err := strconv.ParseFloat(humidity, 64); err == nil || idealH == 0.0 {
+				idealHumidity = idealH
+			}
+			responseText := fmt.Sprintf("change ideal temperature to %v degrees and ideal humidity to %v %%H", idealTemperature, idealHumidity)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		default:

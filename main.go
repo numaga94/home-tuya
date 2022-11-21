@@ -47,10 +47,10 @@ func main() {
 			// fmt.Println("is current temp under ideal temperature:", isCurrentTempUnderIdealTemp)
 
 			// switch office mobile heater by actual office temp
-			if isCurrentTempUnderIdealTemp || isCurrentHumidityUnderIdealHumidity && !currentDeviceSwitchStatus {
+			if isCurrentTempUnderIdealTemp || !isCurrentHumidityUnderIdealHumidity && !currentDeviceSwitchStatus {
 				fmt.Println("Mobile heater is currently off thus turning it on.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), true)
-			} else if !isCurrentTempUnderIdealTemp || !isCurrentHumidityUnderIdealHumidity && currentDeviceSwitchStatus {
+			} else if !isCurrentTempUnderIdealTemp || isCurrentHumidityUnderIdealHumidity && currentDeviceSwitchStatus {
 				fmt.Println("Mobile heater is currently on thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
 			} else {

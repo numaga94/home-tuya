@@ -17,7 +17,7 @@ func main() {
 	idealOfficeTemp := 30.0
 	officeHourBegin := 6
 	officeHourEnd := 23
-	intervalCheckOfficeHour := 5
+	intervalCheckOfficeHour := 1
 	intervalCheckSwitch := 10
 
 	for {
@@ -25,22 +25,27 @@ func main() {
 			time.Sleep(time.Minute * time.Duration(intervalCheckOfficeHour))
 		} else {
 			// get tuya api token
-			lib.GetToken()
-			// get current state
-			currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
-			isCurrentOfficeTempBelowIdealTemp := lib.IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp)
-			// switch office mobile heater by actual office temp
-			if isCurrentOfficeTempBelowIdealTemp && !currentDeviceSwitchStatus {
-				fmt.Println("Mobile heater is currently off thus turning it on.")
-				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
-			} else if !isCurrentOfficeTempBelowIdealTemp && currentDeviceSwitchStatus {
-				fmt.Println("Mobile heater is currently on thus turning it off.")
-				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
+			if err := lib.GetToken(); err != nil {
+				fmt.Println(err.Error())
+				time.Sleep(time.Minute * time.Duration(intervalCheckOfficeHour))
+				continue
 			} else {
-				fmt.Println("Mobile heater is", currentDeviceSwitchStatus)
+				// get current state
+				currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
+				isCurrentOfficeTempBelowIdealTemp := lib.IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp)
+				// switch office mobile heater by actual office temp
+				if isCurrentOfficeTempBelowIdealTemp && !currentDeviceSwitchStatus {
+					fmt.Println("Mobile heater is currently off thus turning it on.")
+					lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
+				} else if !isCurrentOfficeTempBelowIdealTemp && currentDeviceSwitchStatus {
+					fmt.Println("Mobile heater is currently on thus turning it off.")
+					lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
+				} else {
+					fmt.Println("Mobile heater is", currentDeviceSwitchStatus)
+				}
+				// sleep for 10 minutes
+				time.Sleep(time.Minute * time.Duration(intervalCheckSwitch))
 			}
-			// sleep for 10 minutes
-			time.Sleep(time.Minute * time.Duration(intervalCheckSwitch))
 		}
 	}
 }

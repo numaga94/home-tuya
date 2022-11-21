@@ -3,6 +3,7 @@ package lib
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -30,15 +31,15 @@ type TokenResponse struct {
 	T       int64 `json:"t"`
 }
 
-func GetToken() {
+func GetToken() error {
 	if Token == "" || RefreshToken == "" || time.Now().After(ExpireTime) {
-		fetchToken("INIT")
+		return fetchToken("INIT")
 	} else {
-		fetchToken("REFRESH")
+		return fetchToken("REFRESH")
 	}
 }
 
-func fetchToken(action string) {
+func fetchToken(action string) error {
 	method := "GET"
 	body := []byte(``)
 
@@ -60,7 +61,7 @@ func fetchToken(action string) {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Println(err)
-		return
+		return errors.New("network error while fetching token")
 	}
 	defer resp.Body.Close()
 	bs, _ := io.ReadAll(resp.Body)
@@ -72,5 +73,11 @@ func fetchToken(action string) {
 		Token = ret.Result.AccessToken
 		RefreshToken = ret.Result.RefreshToken
 		ExpireTime = time.Now().Add(time.Second * time.Duration(ret.Result.ExpireTime))
+		return nil
+	} else {
+		Token = ""
+		RefreshToken = ""
+		ExpireTime = time.Now()
+		return errors.New("invalid token fetched")
 	}
 }

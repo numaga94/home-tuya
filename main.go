@@ -21,7 +21,7 @@ func main() {
 	openHoursBegin := 6
 	openHoursEnd := 23
 	intervalToCheckOpenHours := 1
-	intervalToUpdateSwitchStatus := 1
+	intervalToUpdateSwitchStatus := 10
 
 	go func() {
 		for {

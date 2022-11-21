@@ -72,6 +72,7 @@ func main() {
 			// fmt.Fprintf(w, "Post from website! r.PostFrom = %v\n", r.PostForm)
 			temp := r.FormValue("temp")
 			idealOfficeTemp, _ = strconv.ParseFloat(temp, 64)
+			fmt.Printf("change ideal temperature to %v degrees", idealOfficeTemp)
 			fmt.Fprintf(w, "change ideal temperature to %v degrees", idealOfficeTemp)
 		default:
 			fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
@@ -98,11 +99,13 @@ func main() {
 			end := r.FormValue("end")
 			officeHourBegin, _ = strconv.Atoi(begin)
 			officeHourEnd, _ = strconv.Atoi(end)
+			fmt.Printf("change ideal office hours into between %v and %v", officeHourBegin, officeHourEnd)
 			fmt.Fprintf(w, "change ideal office hours into between %v and %v", officeHourBegin, officeHourEnd)
 		default:
 			fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
 		}
 	})
+
 	fmt.Println("http server is listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

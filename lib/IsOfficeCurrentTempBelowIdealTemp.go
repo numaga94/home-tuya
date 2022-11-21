@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func IsOfficeCurrentTempBelowIdealTemp(idealOfficeTemp float64) bool {
+func IsOfficeCurrentTempUnderIdealTemp(idealOfficeTemp float64) bool {
 	windowTemp := getOfficeTemperature("WINDOW")
 	doorTemp := getOfficeTemperature("DOOR")
 

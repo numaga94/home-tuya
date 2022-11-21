@@ -37,5 +37,6 @@ func GetDeviceSwitchStatus(deviceId string) bool {
 			return v.Value
 		}
 	}
+	fmt.Println(deviceStatus)
 	return false
 }

@@ -6,13 +6,18 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func IsOfficeCurrentTempUnderIdealTemp(idealOfficeTemp float64) bool {
-	windowTemp := getOfficeTemperature("WINDOW")
-	doorTemp := getOfficeTemperature("DOOR")
+	urls := getSensorUrlSlice(os.Getenv("SENSOR_URLS"))
 
-	averageTemp := (windowTemp + doorTemp) / 2
+	totalTemperature := 0.0
+	for _, url := range urls {
+		totalTemperature += getOfficeTemperature(url)
+	}
+
+	averageTemp := totalTemperature / float64(len(urls))
 
 	if averageTemp > idealOfficeTemp {
 		fmt.Println("Current office temperature is at", averageTemp, "degrees, which is above ideal temperature at", idealOfficeTemp, "degrees.")
@@ -23,13 +28,16 @@ func IsOfficeCurrentTempUnderIdealTemp(idealOfficeTemp float64) bool {
 	}
 }
 
-func getOfficeTemperature(location string) float64 {
-	var requestUrl string
-	if location == "WINDOW" {
-		requestUrl = fmt.Sprintf("%v/temperature", os.Getenv("SENSOR_WINDOW_URL"))
+func getSensorUrlSlice(urls string) []string {
+	if strings.Contains(urls, ",") {
+		return strings.Split(urls, ",")
 	} else {
-		requestUrl = fmt.Sprintf("%v/temperature", os.Getenv("SENSOR_DOOR_URL"))
+		return []string{urls}
 	}
+}
+
+func getOfficeTemperature(url string) float64 {
+	requestUrl := fmt.Sprintf("%v/temperature", url)
 
 	req, _ := http.NewRequest("GET", requestUrl, nil)
 

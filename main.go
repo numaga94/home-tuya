@@ -17,11 +17,11 @@ func main() {
 		fmt.Println("loading env failed")
 	}
 
-	idealTemperature := 28.0
-	openHoursBegin := 6
-	openHoursEnd := 23
-	intervalToCheckOpenHours := 1
-	intervalToUpdateSwitchStatus := 10
+	idealTemperature, _ := strconv.ParseFloat(os.Getenv("IDEAL_TEMPERATURE"), 64)
+	openHoursBegin, _ := strconv.Atoi(os.Getenv("OPEN_HOURS_BEGIN"))
+	openHoursEnd, _ := strconv.Atoi(os.Getenv("OPEN_HOURS_END"))
+	intervalToCheckOpenHours, _ := strconv.Atoi(os.Getenv("INTERVAL_TO_CHECK_OPEN_HOURS"))
+	intervalToUpdateSwitchStatus, _ := strconv.Atoi(os.Getenv("INTERVAL_TO_UPDATE_SWITCH_STATUS"))
 
 	go func() {
 		for {

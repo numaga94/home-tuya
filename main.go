@@ -83,10 +83,10 @@ func main() {
 			// parse values and reassign them to global variants
 			temp := r.FormValue("temperature")
 			humidity := r.FormValue("humidity")
-			if idealT, err := strconv.ParseFloat(temp, 64); err == nil || idealT == 0.0 {
+			if idealT, err := strconv.ParseFloat(temp, 64); err == nil {
 				idealTemperature = idealT
 			}
-			if idealH, err := strconv.ParseFloat(humidity, 64); err == nil || idealH == 0.0 {
+			if idealH, err := strconv.ParseFloat(humidity, 64); err == nil {
 				idealHumidity = idealH
 			}
 			responseText := fmt.Sprintf("change ideal temperature to %v degrees and ideal humidity to %v %%H", idealTemperature, idealHumidity)

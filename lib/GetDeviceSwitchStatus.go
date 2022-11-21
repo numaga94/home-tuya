@@ -33,7 +33,7 @@ func GetDeviceSwitchStatus(deviceId string) bool {
 	deviceStatus := new(ResponseDeviceStatus)
 	json.Unmarshal(bs, &deviceStatus)
 	for _, v := range deviceStatus.Result {
-		if v.Code == "switch_1" {
+		if v.Code == os.Getenv("DEVICE_CODE") {
 			return v.Value
 		}
 	}

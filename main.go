@@ -47,10 +47,10 @@ func main() {
 			// switch office mobile heater by actual office temp
 			if isCurrentTempUnderIdealTemp && !currentDeviceSwitchStatus {
 				fmt.Println("Mobile heater is currently off thus turning it on.")
-				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), true)
 			} else if !isCurrentTempUnderIdealTemp && currentDeviceSwitchStatus {
 				fmt.Println("Mobile heater is currently on thus turning it off.")
-				lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
 			} else {
 				fmt.Println("Mobile heater is", currentDeviceSwitchStatus)
 			}

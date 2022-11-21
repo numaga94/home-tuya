@@ -10,14 +10,14 @@ import (
 	"github.com/numaga/home-tuya/utils"
 )
 
-func IsCurrentTempUnderIdealTemp(idealOfficeTemp float64) bool {
+func IsCurrentTempUnderIdealTemp(idealTemp float64) bool {
 	averageTemp := GetCurrentTemperature()
 
-	if averageTemp > idealOfficeTemp {
-		fmt.Println("Current temperature is at", averageTemp, "degrees, which is above ideal temperature at", idealOfficeTemp, "degrees.")
+	if averageTemp > idealTemp {
+		fmt.Println("Current temperature is at", averageTemp, "degrees, which is above ideal temperature at", idealTemp, "degrees.")
 		return false
 	} else {
-		fmt.Println("Current temperature is at", averageTemp, "degrees, which is under ideal temperature at", idealOfficeTemp, "degrees.")
+		fmt.Println("Current temperature is at", averageTemp, "degrees, which is under ideal temperature at", idealTemp, "degrees.")
 		return true
 	}
 }

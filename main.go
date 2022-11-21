@@ -56,13 +56,16 @@ func main() {
 
 	http.HandleFunc("/ideal-office-temperature", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/ideal-office-temperature" {
-			http.Error(w, "not found.", http.StatusNotFound)
-			return
+			responseText := fmt.Sprintln("404, not found.")
+			log.Println(responseText)
+			http.Error(w, responseText, http.StatusNotFound)
 		}
 
 		switch r.Method {
 		case "GET":
-			fmt.Fprintf(w, "current ideal office temperature is at %v degrees", idealOfficeTemp)
+			responseText := fmt.Sprintf("current ideal office temperature is at %v degrees", idealOfficeTemp)
+			log.Println(responseText)
+			fmt.Fprintln(w, responseText)
 		case "POST":
 			// Call ParseForm() to parse the raw query and update r.PostForm and r.Form.
 			if err := r.ParseForm(); err != nil {
@@ -72,22 +75,29 @@ func main() {
 			// fmt.Fprintf(w, "Post from website! r.PostFrom = %v\n", r.PostForm)
 			temp := r.FormValue("temp")
 			idealOfficeTemp, _ = strconv.ParseFloat(temp, 64)
-			log.Printf("change ideal temperature to %v degrees", idealOfficeTemp)
-			fmt.Fprintf(w, "change ideal temperature to %v degrees", idealOfficeTemp)
+			responseText := fmt.Sprintf("change ideal temperature to %v degrees", idealOfficeTemp)
+			log.Println(responseText)
+			fmt.Fprintln(w, responseText)
 		default:
-			fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
+			responseText := fmt.Sprintln("sorry, only GET and POST methods are supported.")
+			log.Println(responseText)
+			fmt.Fprintln(w, responseText)
 		}
 	})
 
 	http.HandleFunc("/ideal-office-hours", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/ideal-office-hours" {
-			http.Error(w, "not found.", http.StatusNotFound)
+			responseText := fmt.Sprintln("404, not found.")
+			log.Println(responseText)
+			http.Error(w, responseText, http.StatusNotFound)
 			return
 		}
 
 		switch r.Method {
 		case "GET":
-			fmt.Fprintf(w, "current ideal office hours is between %v and %v.", officeHourBegin, officeHourEnd)
+			responseText := fmt.Sprintf("current ideal office hours is between %v and %v.", officeHourBegin, officeHourEnd)
+			log.Println(responseText)
+			fmt.Fprintln(w, responseText)
 		case "POST":
 			// Call ParseForm() to parse the raw query and update r.PostForm and r.Form.
 			if err := r.ParseForm(); err != nil {
@@ -99,10 +109,13 @@ func main() {
 			end := r.FormValue("end")
 			officeHourBegin, _ = strconv.Atoi(begin)
 			officeHourEnd, _ = strconv.Atoi(end)
-			log.Printf("change ideal office hours into between %v and %v", officeHourBegin, officeHourEnd)
-			fmt.Fprintf(w, "change ideal office hours into between %v and %v", officeHourBegin, officeHourEnd)
+			responseText := fmt.Sprintf("change ideal office hours into between %v and %v", officeHourBegin, officeHourEnd)
+			log.Println(responseText)
+			fmt.Fprintln(w, responseText)
 		default:
-			fmt.Fprintf(w, "Sorry, only GET and POST methods are supported.")
+			responseText := fmt.Sprintln("sorry, only GET and POST methods are supported.")
+			log.Println(responseText)
+			fmt.Fprintln(w, responseText)
 		}
 	})
 

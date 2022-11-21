@@ -17,45 +17,45 @@ func main() {
 		fmt.Println("loading env failed")
 	}
 
-	idealOfficeTemp := 28.0
-	officeHourBegin := 6
-	officeHourEnd := 23
-	intervalCheckOfficeHour := 1
-	intervalCheckSwitch := 10
+	idealTemperature := 28.0
+	openHoursBegin := 6
+	openHoursEnd := 23
+	intervalToCheckOpenHours := 1
+	intervalToUpdateSwitchStatus := 10
 
 	go func() {
 		for {
-			if !lib.IsInOfficeHour(officeHourBegin, officeHourEnd) {
-				time.Sleep(time.Minute * time.Duration(intervalCheckOfficeHour))
+			if !lib.InOpenHours(openHoursBegin, openHoursEnd) {
+				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
 			} else {
 				// get tuya api token
 				if err := lib.GetToken(); err != nil {
 					fmt.Println(err.Error())
-					time.Sleep(time.Minute * time.Duration(intervalCheckOfficeHour))
+					time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
 					continue
 				} else {
 					// get current state
 					currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
-					isCurrentOfficeTempBelowIdealTemp := lib.IsOfficeCurrentTempUnderIdealTemp(idealOfficeTemp)
+					isCurrentTempBelowIdealTemp := lib.IsCurrentTempUnderIdealTemp(idealTemperature)
 					// switch office mobile heater by actual office temp
-					if isCurrentOfficeTempBelowIdealTemp && !currentDeviceSwitchStatus {
+					if isCurrentTempBelowIdealTemp && !currentDeviceSwitchStatus {
 						fmt.Println("Mobile heater is currently off thus turning it on.")
 						lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", true)
-					} else if !isCurrentOfficeTempBelowIdealTemp && currentDeviceSwitchStatus {
+					} else if !isCurrentTempBelowIdealTemp && currentDeviceSwitchStatus {
 						fmt.Println("Mobile heater is currently on thus turning it off.")
 						lib.SwitchDevice(os.Getenv("DEVICE_ID"), "switch_1", false)
 					} else {
 						fmt.Println("Mobile heater is", currentDeviceSwitchStatus)
 					}
 					// sleep for 10 minutes
-					time.Sleep(time.Minute * time.Duration(intervalCheckSwitch))
+					time.Sleep(time.Minute * time.Duration(intervalToUpdateSwitchStatus))
 				}
 			}
 		}
 	}()
 
-	http.HandleFunc("/ideal-office-temperature", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/ideal-office-temperature" {
+	http.HandleFunc("/ideal-temperature", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/ideal-temperature" {
 			responseText := fmt.Sprintln("404, not found.")
 			log.Println(responseText)
 			http.Error(w, responseText, http.StatusNotFound)
@@ -63,7 +63,7 @@ func main() {
 
 		switch r.Method {
 		case "GET":
-			responseText := fmt.Sprintf("current ideal office temperature is at %v degrees", idealOfficeTemp)
+			responseText := fmt.Sprintf("current ideal temperature is at %v degrees", idealTemperature)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		case "POST":
@@ -72,10 +72,10 @@ func main() {
 				fmt.Fprintf(w, "ParseForm() err: %v", err)
 				return
 			}
-			// fmt.Fprintf(w, "Post from website! r.PostFrom = %v\n", r.PostForm)
+			// parse values and reassign them to global variants
 			temp := r.FormValue("temp")
-			idealOfficeTemp, _ = strconv.ParseFloat(temp, 64)
-			responseText := fmt.Sprintf("change ideal temperature to %v degrees", idealOfficeTemp)
+			idealTemperature, _ = strconv.ParseFloat(temp, 64)
+			responseText := fmt.Sprintf("change ideal temperature to %v degrees", idealTemperature)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		default:
@@ -85,8 +85,8 @@ func main() {
 		}
 	})
 
-	http.HandleFunc("/ideal-office-hours", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/ideal-office-hours" {
+	http.HandleFunc("/open-hours", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/open-hours" {
 			responseText := fmt.Sprintln("404, not found.")
 			log.Println(responseText)
 			http.Error(w, responseText, http.StatusNotFound)
@@ -95,7 +95,7 @@ func main() {
 
 		switch r.Method {
 		case "GET":
-			responseText := fmt.Sprintf("current ideal office hours is between %v and %v.", officeHourBegin, officeHourEnd)
+			responseText := fmt.Sprintf("current open hours is between %v and %v.", openHoursBegin, openHoursEnd)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		case "POST":
@@ -104,12 +104,12 @@ func main() {
 				fmt.Fprintf(w, "ParseForm() err: %v", err)
 				return
 			}
-			// fmt.Fprintf(w, "Post from website! r.PostFrom = %v\n", r.PostForm)
+			// parse values and reassign them to global variants
 			begin := r.FormValue("begin")
 			end := r.FormValue("end")
-			officeHourBegin, _ = strconv.Atoi(begin)
-			officeHourEnd, _ = strconv.Atoi(end)
-			responseText := fmt.Sprintf("change ideal office hours into between %v and %v", officeHourBegin, officeHourEnd)
+			openHoursBegin, _ = strconv.Atoi(begin)
+			openHoursEnd, _ = strconv.Atoi(end)
+			responseText := fmt.Sprintf("change opens hours into between %v and %v.", openHoursBegin, openHoursEnd)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		default:

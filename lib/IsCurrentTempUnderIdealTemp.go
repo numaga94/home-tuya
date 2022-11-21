@@ -9,12 +9,12 @@ import (
 	"strings"
 )
 
-func IsOfficeCurrentTempUnderIdealTemp(idealOfficeTemp float64) bool {
+func IsCurrentTempUnderIdealTemp(idealOfficeTemp float64) bool {
 	urls := getSensorUrlSlice(os.Getenv("SENSOR_URLS"))
 
 	totalTemperature := 0.0
 	for _, url := range urls {
-		totalTemperature += getOfficeTemperature(url)
+		totalTemperature += getDeviceTemperature(url)
 	}
 
 	averageTemp := totalTemperature / float64(len(urls))
@@ -36,7 +36,7 @@ func getSensorUrlSlice(urls string) []string {
 	}
 }
 
-func getOfficeTemperature(url string) float64 {
+func getDeviceTemperature(url string) float64 {
 	requestUrl := fmt.Sprintf("%v/temperature", url)
 
 	req, _ := http.NewRequest("GET", requestUrl, nil)

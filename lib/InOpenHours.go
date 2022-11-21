@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func IsInOfficeHour(beginHour int, endHour int) bool {
+func InOpenHours(beginHour int, endHour int) bool {
 	currentHour := time.Now().Hour()
 	if currentHour >= beginHour && currentHour <= endHour {
 		fmt.Println("Current time is in office hour.")

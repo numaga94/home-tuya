@@ -56,7 +56,7 @@ func main() {
 				fmt.Println("mobile heater is currently off.")
 			}
 
-			// sleep for 10 minutes
+			// sleep for 10 minutes for next loop
 			time.Sleep(time.Minute * time.Duration(intervalToUpdateSwitchStatus))
 		}
 	}()

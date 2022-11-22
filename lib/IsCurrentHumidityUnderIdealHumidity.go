@@ -12,13 +12,12 @@ import (
 
 func IsCurrentHumidityUnderIdealHumidity(idealHumidity float64) bool {
 	averageHumidity := GetCurrentHumidity()
-
 	if averageHumidity < idealHumidity {
-		fmt.Println("Current humidity is at", averageHumidity, "degrees, which is above ideal humidity at", idealHumidity, "%H.")
-		return false
-	} else {
 		fmt.Println("Current humidity is at", averageHumidity, "degrees, which is under ideal humidity at", idealHumidity, "%H.")
 		return true
+	} else {
+		fmt.Println("Current humidity is at", averageHumidity, "degrees, which is above ideal humidity at", idealHumidity, "%H.")
+		return false
 	}
 }
 

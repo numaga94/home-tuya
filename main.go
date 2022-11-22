@@ -48,12 +48,12 @@ func main() {
 			currentTime := time.Now()
 			currentHour := currentTime.Hour()
 			currentMinute := currentTime.Minute()
-			if currentHour == openHoursEnd+1 && currentMinute <= (59+intervalToUpdateSwitchStatus)%60 {
-				fmt.Printf("current time %v:%v is out of open hours between %v and %v.\n", currentHour, currentMinute, openHoursBegin, openHoursEnd)
+			if !turnOnDeviceByTemperature && !turnOnDeviceByHumidity && currentDeviceSwitchStatus {
+				// switch office mobile heater by actual office temp
 				fmt.Println("mobile heater is currently on thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
-			} else if !turnOnDeviceByTemperature && !turnOnDeviceByHumidity && currentDeviceSwitchStatus {
-				// switch office mobile heater by actual office temp
+			} else if currentHour == openHoursEnd+1 && currentMinute <= (59+intervalToUpdateSwitchStatus)%60 {
+				fmt.Printf("current time %v:%v is out of open hours between %v and %v.\n", currentHour, currentMinute, openHoursBegin, openHoursEnd)
 				fmt.Println("mobile heater is currently on thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
 			} else {

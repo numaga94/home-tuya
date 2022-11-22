@@ -3,6 +3,7 @@ package lib
 import (
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
@@ -10,13 +11,17 @@ import (
 	"github.com/numaga/home-tuya/utils"
 )
 
-func IsCurrentHumidityUnderIdealHumidity(idealHumidity float64) bool {
-	averageHumidity := GetCurrentHumidity()
-	if averageHumidity < idealHumidity {
-		fmt.Println("Current humidity is at", averageHumidity, "degrees, which is under ideal humidity at", idealHumidity, "%H.")
+func TurnOnDeviceByHumidity(idealHumidity float64) bool {
+	actualHumidity := GetCurrentHumidity()
+
+	if int(math.Round(idealHumidity)) > int(math.Round(actualHumidity)) {
+		fmt.Println("current humidity is at", actualHumidity, "%H, which feels drier than ideal humidity at", idealHumidity, "%H.")
+		return false
+	} else if int(math.Round(idealHumidity)) < int(math.Round(actualHumidity)) {
+		fmt.Println("current humidity is at", actualHumidity, "%H, which feels wetter than ideal humidity at", idealHumidity, "%H.")
 		return true
 	} else {
-		fmt.Println("Current humidity is at", averageHumidity, "degrees, which is above ideal humidity at", idealHumidity, "%H.")
+		fmt.Println("current humidity is the same as the ideal humidity at", actualHumidity, "%H.")
 		return false
 	}
 }

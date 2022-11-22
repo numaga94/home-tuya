@@ -3,6 +3,7 @@ package lib
 import (
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
@@ -10,15 +11,18 @@ import (
 	"github.com/numaga/home-tuya/utils"
 )
 
-func IsCurrentTempUnderIdealTemp(idealTemp float64) bool {
-	averageTemp := GetCurrentTemperature()
+func TurnOnDeviceByTemperature(idealTemp float64) bool {
+	actualTemp := GetCurrentTemperature()
 
-	if averageTemp > idealTemp {
-		fmt.Println("Current temperature is at", averageTemp, "degrees, which is above ideal temperature at", idealTemp, "degrees.")
+	if int(math.Round(idealTemp)) > int(math.Round(actualTemp)) {
+		fmt.Println("current temperature is at", actualTemp, "degrees, which is under ideal temperature at", idealTemp, "degrees.")
+		return true
+	} else if int(math.Round(idealTemp)) < int(math.Round(actualTemp)) {
+		fmt.Println("current temperature is at", actualTemp, "degrees, which is above ideal temperature at", idealTemp, "degrees.")
 		return false
 	} else {
-		fmt.Println("Current temperature is at", averageTemp, "degrees, which is under ideal temperature at", idealTemp, "degrees.")
-		return true
+		fmt.Println("current temperature is equal to ideal temperature at", idealTemp, "degrees.")
+		return false
 	}
 }
 

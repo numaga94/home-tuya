@@ -48,7 +48,7 @@ func main() {
 			currentHour := currentTime.Hour()
 			currentMinute := currentTime.Minute()
 			if currentHour == openHoursEnd+1 && currentMinute <= (59+intervalToUpdateSwitchStatus)%60 {
-				fmt.Println("current time is in open hours between", openHoursBegin, "and", openHoursEnd)
+				fmt.Printf("current time %v:%v is out of open hours between %v and %v.\n", currentHour, currentMinute, openHoursBegin, openHoursEnd)
 				fmt.Println("mobile heater is currently on thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
 			} else if !TurnOnDeviceByTemperature && !TurnOnDeviceByHumidity && currentDeviceSwitchStatus {

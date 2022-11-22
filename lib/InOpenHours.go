@@ -13,10 +13,10 @@ func InOpenHours(beginHour int, endHour int, intervalToUpdateSwitchStatus int) b
 		fmt.Println("current time is in open hours between", beginHour, "and", endHour)
 		return true
 	} else if currentHour == endHour+1 && currentMinute <= (59+intervalToUpdateSwitchStatus)%60 {
-		fmt.Println("current time is in open hours between", beginHour, "and", endHour)
+		fmt.Printf("current time %v:%v is out of open hours between %v and %v.\n", currentHour, currentMinute, beginHour, endHour)
 		return true
 	} else {
-		fmt.Println("current time is out of the open hours between", beginHour, "and", endHour)
+		fmt.Printf("current time %v:%v is out of open hours between %v and %v.\n", currentHour, currentMinute, beginHour, endHour)
 		return false
 	}
 }

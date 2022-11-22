@@ -45,20 +45,13 @@ func main() {
 			turnOnDeviceByHumidity := lib.TurnOnDeviceByHumidity(idealHumidity)
 			fmt.Println("current device status:", currentDeviceSwitchStatus, "turn on device by temperature:", turnOnDeviceByHumidity, "turn on device by humidity:", turnOnDeviceByHumidity)
 
-			currentTime := time.Now()
-			currentHour := currentTime.Hour()
-			currentMinute := currentTime.Minute()
-			if !turnOnDeviceByTemperature && !turnOnDeviceByHumidity && currentDeviceSwitchStatus {
-				// switch office mobile heater by actual office temp
-				fmt.Println("mobile heater is currently on thus turning it off.")
-				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
-			} else if currentHour == openHoursEnd+1 && currentMinute <= (59+intervalToUpdateSwitchStatus)%60 {
-				fmt.Printf("current time %v:%v is out of open hours between %v and %v.\n", currentHour, currentMinute, openHoursBegin, openHoursEnd)
-				fmt.Println("mobile heater is currently on thus turning it off.")
-				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
-			} else {
+			// switch office mobile heater by actual office temp
+			if turnOnDeviceByTemperature || turnOnDeviceByHumidity && !currentDeviceSwitchStatus {
 				fmt.Println("mobile heater is currently off thus turning it on.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), true)
+			} else {
+				fmt.Println("mobile heater is currently on thus turning it off.")
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
 			}
 
 			// sleep for 10 minutes

@@ -43,7 +43,7 @@ func main() {
 			currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
 			turnOnDeviceByTemperature := lib.TurnOnDeviceByTemperature(idealTemperature)
 			turnOnDeviceByHumidity := lib.TurnOnDeviceByHumidity(idealHumidity)
-			fmt.Println("turn on device by temperature:", turnOnDeviceByHumidity, ". turn on device by humidity:", turnOnDeviceByHumidity, ". current device status:", currentDeviceSwitchStatus)
+			fmt.Println("Turn on device by temperature:", turnOnDeviceByHumidity, "| Turn on device by humidity:", turnOnDeviceByHumidity, "| Current device status:", currentDeviceSwitchStatus)
 
 			// switch office mobile heater by actual office temp
 			if turnOnDeviceByTemperature || turnOnDeviceByHumidity && !currentDeviceSwitchStatus {
@@ -72,7 +72,7 @@ func main() {
 		case "GET":
 			currentTemperature := lib.GetCurrentTemperature()
 			currentHumidity := lib.GetCurrentHumidity()
-			responseText := fmt.Sprintf("ideal: %v degrees + %v %%H and current: %v degrees + %v %%H", idealTemperature, idealHumidity, currentTemperature, currentHumidity)
+			responseText := fmt.Sprintf("ideal: %.1f degrees + %.1f %%H and current: %.1f degrees + %.1f %%H", idealTemperature, idealHumidity, currentTemperature, currentHumidity)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		case "POST":
@@ -90,7 +90,7 @@ func main() {
 			if idealH, err := strconv.ParseFloat(humidity, 64); err == nil {
 				idealHumidity = idealH
 			}
-			responseText := fmt.Sprintf("change ideal temperature to %v degrees and ideal humidity to %v %%H", idealTemperature, idealHumidity)
+			responseText := fmt.Sprintf("change ideal temperature to %.1f degrees and ideal humidity to %.1f %%H", idealTemperature, idealHumidity)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		default:
@@ -110,7 +110,7 @@ func main() {
 
 		switch r.Method {
 		case "GET":
-			responseText := fmt.Sprintf("current open hours is between %v and %v.", openHoursBegin, openHoursEnd)
+			responseText := fmt.Sprintf("current open hours is between %d and %d.", openHoursBegin, openHoursEnd)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		case "POST":
@@ -124,7 +124,7 @@ func main() {
 			end := r.FormValue("end")
 			openHoursBegin, _ = strconv.Atoi(begin)
 			openHoursEnd, _ = strconv.Atoi(end)
-			responseText := fmt.Sprintf("change opens hours into between %v and %v.", openHoursBegin, openHoursEnd)
+			responseText := fmt.Sprintf("change opens hours into between %d and %d.", openHoursBegin, openHoursEnd)
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 		default:

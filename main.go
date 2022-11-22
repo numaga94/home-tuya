@@ -49,9 +49,11 @@ func main() {
 			if turnOnDeviceByTemperature || turnOnDeviceByHumidity && !currentDeviceSwitchStatus {
 				fmt.Println("mobile heater is currently off thus turning it on.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), true)
-			} else {
+			} else if currentDeviceSwitchStatus {
 				fmt.Println("mobile heater is currently on thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
+			} else {
+				fmt.Println("mobile heater is currently off.")
 			}
 
 			// sleep for 10 minutes

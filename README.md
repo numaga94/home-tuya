@@ -22,8 +22,8 @@
 
 - for raspberry pi zero: ARM v6
 
-  env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -o main-ARMv6 .
+  env GOOS=linux GOARCH=arm GOARM=6 CGO_ENABLED=0 go build -ldflags="-s -w" -o main-ARMv6 .
 
 - for raspberry pi zero2, 3, and 4: ARM v7
 
-  env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -o main-ARMv7 .
+  env GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=0 go build -ldflags="-s -w" -o main-ARMv7 .

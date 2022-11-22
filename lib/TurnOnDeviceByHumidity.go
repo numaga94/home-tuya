@@ -21,7 +21,7 @@ func TurnOnDeviceByHumidity(idealHumidity float64) bool {
 		fmt.Println("current humidity is at", actualHumidity, "%H, which feels wetter than ideal humidity at", idealHumidity, "%H.")
 		return true
 	} else {
-		fmt.Println("current humidity is the same as the ideal humidity at", actualHumidity, "%H.")
+		fmt.Println("current humidity is equal to ideal humidity at", actualHumidity, "%H.")
 		return false
 	}
 }

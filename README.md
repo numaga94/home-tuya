@@ -4,12 +4,12 @@
 
     # default configs
     HOST_URL="https://openapi.tuyaeu.com"
-    CLIENT_ID=
-    CLIENT_SECRET=
+    CLIENT_ID="YOUR_CLIENT_ID"
+    CLIENT_SECRET="YOUR_CLIENT_SECRET"
 
     # custom configs
-    DEVICE_ID=
-    DEVICE_CODE="switch"
+    DEVICE_ID="YOUR_DEVICE_ID"
+    DEVICE_CODE="YOUR_DEVICE_CODE"
     SENSOR_URLS="http://192.168.1.xxx,http://192.168.1.xxx"
     IDEAL_TEMPERATURE=20
     IDEAL_HUMIDITY=62

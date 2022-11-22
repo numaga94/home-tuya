@@ -1,11 +1,12 @@
 # home-tuya
 
-## Env
+## create a .env file in the root directory for the configs
 
     # default configs
     HOST_URL="https://openapi.tuyaeu.com"
     CLIENT_ID=
     CLIENT_SECRET=
+
     # custom configs
     DEVICE_ID=
     DEVICE_CODE="switch"
@@ -17,12 +18,12 @@
     INTERVAL_TO_CHECK_OPEN_HOURS=1
     INTERVAL_TO_UPDATE_SWITCH_STATUS=5
 
-## Build a binary file for ARM devices
+## build an executable binary file for ARM devices
 
-- for ARM v6
+- for raspberry pi zero: ARM v6
 
-  env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -o main-v6 .
+  env GOOS=linux GOARCH=arm GOARM=6 go build -ldflags="-s -w" -o main-ARMv6 .
 
-- for ARM v7
+- for raspberry pi zero2, 3, and 4: ARM v7
 
-  env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -o main-v7 .
+  env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -o main-ARMv7 .

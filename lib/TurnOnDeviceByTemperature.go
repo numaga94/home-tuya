@@ -15,13 +15,13 @@ func TurnOnDeviceByTemperature(idealTemp float64) bool {
 	actualTemp := GetCurrentTemperature()
 
 	if int(math.Round(idealTemp)) > int(math.Round(actualTemp)) {
-		fmt.Println("current temperature is at", actualTemp, "degrees, which is higher than ideal temperature at", idealTemp, "degrees.")
+		fmt.Printf("current temperature is at %.1f degrees, which is higher than ideal temperature at %.1f degrees.\n", actualTemp, idealTemp)
 		return true
 	} else if int(math.Round(idealTemp)) < int(math.Round(actualTemp)) {
-		fmt.Println("current temperature is at", actualTemp, "degrees, which is lower than ideal temperature at", idealTemp, "degrees.")
+		fmt.Printf("current temperature is at %.1f degrees, which is lower than ideal temperature at %.1f degrees.\n", actualTemp, idealTemp)
 		return false
 	} else {
-		fmt.Println("current temperature is equal to ideal temperature at", idealTemp, "degrees.")
+		fmt.Printf("current temperature is equal to ideal temperature at %.1f degrees.\n", idealTemp)
 		return false
 	}
 }

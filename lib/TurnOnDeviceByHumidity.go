@@ -15,13 +15,13 @@ func TurnOnDeviceByHumidity(idealHumidity float64) bool {
 	actualHumidity := GetCurrentHumidity()
 
 	if int(math.Round(idealHumidity)) > int(math.Round(actualHumidity)) {
-		fmt.Println("current humidity is at", actualHumidity, "%H, which feels drier than ideal humidity at", idealHumidity, "%H.")
+		fmt.Printf("current humidity is at %.1f %%H, which feels drier than ideal humidity at %.1f %%H.\n", actualHumidity, idealHumidity)
 		return false
 	} else if int(math.Round(idealHumidity)) < int(math.Round(actualHumidity)) {
-		fmt.Println("current humidity is at", actualHumidity, "%H, which feels wetter than ideal humidity at", idealHumidity, "%H.")
+		fmt.Printf("current humidity is at %.1f %%H, which feels wetter than ideal humidity at %.1f %%H.\n", actualHumidity, idealHumidity)
 		return true
 	} else {
-		fmt.Println("current humidity is equal to ideal humidity at", actualHumidity, "%H.")
+		fmt.Printf("current humidity is equal to ideal humidity at %.1f %%H.\n", actualHumidity)
 		return false
 	}
 }

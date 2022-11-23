@@ -32,6 +32,13 @@ func main() {
 				continue
 			}
 
+			// get tuya api token
+			if err := lib.GetToken(); err != nil {
+				fmt.Println(err.Error())
+				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
+				continue
+			}
+
 			// get current state
 			currentDeviceSwitchStatus := lib.GetDeviceSwitchStatus(os.Getenv("DEVICE_ID"))
 			turnOnDeviceByTemperature := lib.TurnOnDeviceByTemperature(idealTemperature)
@@ -40,23 +47,11 @@ func main() {
 
 			// switch office mobile heater by actual office temp
 			if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
-				// get tuya api token
-				if err := lib.GetToken(); err != nil {
-					fmt.Println(err.Error())
-					time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
-					continue
-				}
 				// action on switch
 				fmt.Println("mobile heater is in extended hours thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
 			} else if turnOnDeviceByTemperature || turnOnDeviceByHumidity {
 				if !currentDeviceSwitchStatus {
-					// get tuya api token
-					if err := lib.GetToken(); err != nil {
-						fmt.Println(err.Error())
-						time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
-						continue
-					}
 					// action on switch
 					fmt.Println("mobile heater is currently off thus turning it on.")
 					lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), true)
@@ -64,12 +59,6 @@ func main() {
 					fmt.Println("mobile heater is currently on.")
 				}
 			} else if currentDeviceSwitchStatus {
-				// get tuya api token
-				if err := lib.GetToken(); err != nil {
-					fmt.Println(err.Error())
-					time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
-					continue
-				}
 				// action on switch
 				fmt.Println("mobile heater is currently on thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)

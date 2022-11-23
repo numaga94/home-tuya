@@ -20,3 +20,16 @@ func InOpenHours(beginHour int, endHour int, intervalToUpdateSwitchStatus int) b
 		return false
 	}
 }
+
+func InExtendedHours(beginHour int, endHour int, intervalToUpdateSwitchStatus int) bool {
+	currentTime := time.Now()
+	currentHour := currentTime.Hour()
+	currentMinute := currentTime.Minute()
+	if currentHour == endHour+1 && currentMinute <= (59+intervalToUpdateSwitchStatus)%60 {
+		fmt.Printf("current time %v:%v is in extended hours.\n", currentHour, currentMinute)
+		return true
+	} else {
+		fmt.Printf("current time %v:%v is out of extended hours.\n", currentHour, currentMinute)
+		return false
+	}
+}

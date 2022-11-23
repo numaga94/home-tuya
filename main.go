@@ -46,7 +46,10 @@ func main() {
 			fmt.Println("Turn on device by temperature:", turnOnDeviceByTemperature, "| Turn on device by humidity:", turnOnDeviceByHumidity, "| Current device status:", currentDeviceSwitchStatus)
 
 			// switch office mobile heater by actual office temp
-			if turnOnDeviceByTemperature || turnOnDeviceByHumidity {
+			if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
+				fmt.Println("mobile heater is in extended hours thus turning it off.")
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
+			} else if turnOnDeviceByTemperature || turnOnDeviceByHumidity {
 				if !currentDeviceSwitchStatus {
 					fmt.Println("mobile heater is currently off thus turning it on.")
 					lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), true)

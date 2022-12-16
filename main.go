@@ -87,7 +87,7 @@ func main() {
 			case "GET":
 				currentTemperature := lib.GetCurrentTemperature()
 				currentHumidity := lib.GetCurrentHumidity()
-				responseText := fmt.Sprintf("ideal: %.1f degrees + %.1f %%H and current: %.1f degrees + %.1f %%H", idealTemperature, idealHumidity, currentTemperature, currentHumidity)
+				responseText := fmt.Sprintf("ideal: %.1f degrees, %.1f %%H and current: %.1f degrees, %.1f %%H", idealTemperature, idealHumidity, currentTemperature, currentHumidity)
 				log.Println(responseText)
 				fmt.Fprintln(w, responseText)
 			case "POST":

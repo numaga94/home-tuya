@@ -25,8 +25,18 @@ func main() {
 	intervalToCheckOpenHours, _ := strconv.Atoi(os.Getenv("INTERVAL_TO_CHECK_OPEN_HOURS"))
 	intervalToUpdateSwitchStatus, _ := strconv.Atoi(os.Getenv("INTERVAL_TO_UPDATE_SWITCH_STATUS"))
 
+	// set default SWITCH to ON
+	SWITCH := true
+
 	go func() {
 		for {
+			// check if switch is ON
+			if !SWITCH {
+				fmt.Println("SWITCH turns OFF")
+				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
+				continue
+			}
+
 			// check if current hour in open hours
 			if !lib.InOpenHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
 				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
@@ -47,7 +57,11 @@ func main() {
 			fmt.Println("Turn on device by temperature:", turnOnDeviceByTemperature, "| Turn on device by humidity:", turnOnDeviceByHumidity, "| Current device status:", currentDeviceSwitchStatus)
 
 			// switch office mobile heater by actual office temp
-			if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
+			if !SWITCH {
+				// action on switch
+				fmt.Println("SWITCH turns OFF thus turning it off")
+				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
+			} else if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
 				// action on switch
 				fmt.Println("mobile heater is in extended hours thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
@@ -78,11 +92,17 @@ func main() {
 		// 	log.Println(responseText)
 		// 	http.Error(w, responseText, http.StatusNotFound)
 		// }
+		switchStatus := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("switch")))
+		idealTemperatureHumidity := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("ideal-temperature-humidity")))
+		openHours := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("open-hours")))
 
-		idealTemperatureHumidity := strings.TrimSpace(r.URL.Query().Get("ideal-temperature-humidity"))
-		openHours := strings.TrimSpace(r.URL.Query().Get("open-hours"))
-
-		if idealTemperatureHumidity == "true" {
+		if switchStatus == "true" {
+			SWITCH = true
+			return
+		} else if switchStatus == "false" {
+			SWITCH = false
+			return
+		} else if idealTemperatureHumidity == "true" {
 			switch r.Method {
 			case "GET":
 				currentTemperature := lib.GetCurrentTemperature()

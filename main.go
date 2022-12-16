@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -72,8 +73,8 @@ func main() {
 	}()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		idealTemperatureHumidity := r.Header.Get("ideal-temperature-humidity")
-		openHours := r.Header.Get("open-hours")
+		idealTemperatureHumidity := strings.TrimSpace(r.URL.Query().Get("ideal-temperature-humidity"))
+		openHours := strings.TrimSpace(r.URL.Query().Get("open-hours"))
 
 		if idealTemperatureHumidity != "" {
 			// if r.URL.Path != "/ideal-temperature-humidity" {

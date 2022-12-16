@@ -73,16 +73,16 @@ func main() {
 	}()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		// if r.URL.Path != "/ideal-temperature-humidity" {
+		// 	responseText := fmt.Sprintln("404, not found.")
+		// 	log.Println(responseText)
+		// 	http.Error(w, responseText, http.StatusNotFound)
+		// }
+
 		idealTemperatureHumidity := strings.TrimSpace(r.URL.Query().Get("ideal-temperature-humidity"))
 		openHours := strings.TrimSpace(r.URL.Query().Get("open-hours"))
 
-		if idealTemperatureHumidity != "" {
-			// if r.URL.Path != "/ideal-temperature-humidity" {
-			// 	responseText := fmt.Sprintln("404, not found.")
-			// 	log.Println(responseText)
-			// 	http.Error(w, responseText, http.StatusNotFound)
-			// }
-
+		if idealTemperatureHumidity != "true" {
 			switch r.Method {
 			case "GET":
 				currentTemperature := lib.GetCurrentTemperature()
@@ -113,7 +113,8 @@ func main() {
 				log.Println(responseText)
 				fmt.Fprintln(w, responseText)
 			}
-		} else if openHours != "" {
+			return
+		} else if openHours != "true" {
 			switch r.Method {
 			case "GET":
 				responseText := fmt.Sprintf("current open hours is between %d and %d.", openHoursBegin, openHoursEnd)
@@ -138,22 +139,14 @@ func main() {
 				log.Println(responseText)
 				fmt.Fprintln(w, responseText)
 			}
+			return
 		} else {
 			responseText := fmt.Sprintln("404, not found.")
 			log.Println(responseText)
 			http.Error(w, responseText, http.StatusNotFound)
+			return
 		}
 	})
-
-	// http.HandleFunc("/open-hours", func(w http.ResponseWriter, r *http.Request) {
-	// 	if r.URL.Path != "/open-hours" {
-	// 		responseText := fmt.Sprintln("404, not found.")
-	// 		log.Println(responseText)
-	// 		http.Error(w, responseText, http.StatusNotFound)
-	// 		return
-	// 	}
-
-	// })
 
 	fmt.Println("http server is listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

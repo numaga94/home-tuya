@@ -30,13 +30,6 @@ func main() {
 
 	go func() {
 		for {
-			// check if switch is ON
-			if !SWITCH {
-				fmt.Println("SWITCH is OFF")
-				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
-				continue
-			}
-
 			// check if current hour in open hours
 			if !lib.InOpenHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
 				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
@@ -56,12 +49,16 @@ func main() {
 			turnOnDeviceByHumidity := lib.TurnOnDeviceByHumidity(idealHumidity)
 			fmt.Println("Turn on device by temperature:", turnOnDeviceByTemperature, "| Turn on device by humidity:", turnOnDeviceByHumidity, "| Current device status:", currentDeviceSwitchStatus)
 
-			// switch office mobile heater by actual office temp
+			// check if switch is ON
 			if !SWITCH {
-				// action on switch
 				fmt.Println("SWITCH is OFF thus turning it off")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
-			} else if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
+				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
+				continue
+			}
+
+			// switch office mobile heater by actual office temp
+			if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
 				// action on switch
 				fmt.Println("mobile heater is in extended hours thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)

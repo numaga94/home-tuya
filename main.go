@@ -98,9 +98,15 @@ func main() {
 
 		if switchStatus == "true" {
 			SWITCH = true
+			responseText := "heater SWITCH ON"
+			log.Println(responseText)
+			fmt.Fprintln(w, responseText)
 			return
 		} else if switchStatus == "false" {
 			SWITCH = false
+			responseText := "heater SWITCH OFF"
+			log.Println(responseText)
+			fmt.Fprintln(w, responseText)
 			return
 		} else if idealTemperatureHumidity == "true" {
 			switch r.Method {

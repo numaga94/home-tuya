@@ -57,12 +57,8 @@ func main() {
 				} else {
 					fmt.Println("SWITCH is OFF and heater is OFF")
 				}
-				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
-				continue
-			}
-
-			// switch office mobile heater by actual office temp
-			if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
+				// switch office mobile heater by actual office temp
+			} else if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
 				// action on switch
 				fmt.Println("mobile heater is in extended hours thus turning it off.")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)

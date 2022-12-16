@@ -82,7 +82,7 @@ func main() {
 		idealTemperatureHumidity := strings.TrimSpace(r.URL.Query().Get("ideal-temperature-humidity"))
 		openHours := strings.TrimSpace(r.URL.Query().Get("open-hours"))
 
-		if idealTemperatureHumidity != "true" {
+		if idealTemperatureHumidity == "true" {
 			switch r.Method {
 			case "GET":
 				currentTemperature := lib.GetCurrentTemperature()
@@ -114,7 +114,7 @@ func main() {
 				fmt.Fprintln(w, responseText)
 			}
 			return
-		} else if openHours != "true" {
+		} else if openHours == "true" {
 			switch r.Method {
 			case "GET":
 				responseText := fmt.Sprintf("current open hours is between %d and %d.", openHoursBegin, openHoursEnd)

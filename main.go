@@ -51,8 +51,12 @@ func main() {
 
 			// check if switch is ON
 			if !SWITCH {
-				fmt.Println("SWITCH is OFF thus turning it off")
-				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
+				if currentDeviceSwitchStatus {
+					fmt.Println("SWITCH is OFF thus turning it off")
+					lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
+				} else {
+					fmt.Println("SWITCH is OFF and heater is OFF")
+				}
 				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
 				continue
 			}

@@ -32,7 +32,7 @@ func main() {
 		for {
 			// check if switch is ON
 			if !SWITCH {
-				fmt.Println("SWITCH turns OFF")
+				fmt.Println("SWITCH is OFF")
 				time.Sleep(time.Minute * time.Duration(intervalToCheckOpenHours))
 				continue
 			}
@@ -59,7 +59,7 @@ func main() {
 			// switch office mobile heater by actual office temp
 			if !SWITCH {
 				// action on switch
-				fmt.Println("SWITCH turns OFF thus turning it off")
+				fmt.Println("SWITCH is OFF thus turning it off")
 				lib.SwitchDevice(os.Getenv("DEVICE_ID"), os.Getenv("DEVICE_CODE"), false)
 			} else if lib.InExtendedHours(openHoursBegin, openHoursEnd, intervalToUpdateSwitchStatus) {
 				// action on switch
@@ -98,13 +98,13 @@ func main() {
 
 		if switchStatus == "true" {
 			SWITCH = true
-			responseText := "heater SWITCH ON"
+			responseText := "heater SWITCH turns ON"
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 			return
 		} else if switchStatus == "false" {
 			SWITCH = false
-			responseText := "heater SWITCH OFF"
+			responseText := "heater SWITCH turns OFF"
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
 			return

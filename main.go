@@ -92,6 +92,7 @@ func main() {
 		switchStatus := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("switch")))
 		idealTemperatureHumidity := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("ideal-temperature-humidity")))
 		openHours := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("open-hours")))
+		currentTemperatureHumidity := strings.ToLower(strings.TrimSpace(r.URL.Query().Get("current-temperature-humidity")))
 
 		if switchStatus == "true" {
 			SWITCH = true
@@ -104,6 +105,16 @@ func main() {
 			responseText := "heater SWITCH turns OFF"
 			log.Println(responseText)
 			fmt.Fprintln(w, responseText)
+			return
+		} else if currentTemperatureHumidity == "true" {
+			currentTemperature := lib.GetCurrentTemperature()
+			currentHumidity := lib.GetCurrentHumidity()
+
+			log.Println("current temperature:", currentTemperature, "current humidity:", currentHumidity)
+			fmt.Fprintln(w, map[string]float64{
+				"temperature": currentTemperature,
+				"humidity":    currentHumidity,
+			})
 			return
 		} else if idealTemperatureHumidity == "true" {
 			switch r.Method {

@@ -123,14 +123,16 @@ func main() {
 			case "GET":
 				currentTemperature := lib.GetCurrentTemperature()
 				currentHumidity := lib.GetCurrentHumidity()
+
+				responseText := fmt.Sprintf("ideal: %.1f degrees, %.1f %%H and current: %.1f degrees, %.1f %%H", idealTemperature, idealHumidity, currentTemperature, currentHumidity)
+				log.Println(responseText)
+
 				response, _ := json.Marshal(map[string]float64{
 					"ideal_temperature":   idealTemperature,
 					"ideal_humidity":      idealHumidity,
 					"current_temperature": currentTemperature,
 					"current_humidity":    currentHumidity,
 				})
-				responseText := fmt.Sprintf("ideal: %.1f degrees, %.1f %%H and current: %.1f degrees, %.1f %%H", idealTemperature, idealHumidity, currentTemperature, currentHumidity)
-				log.Println(responseText)
 				fmt.Fprintln(w, string(response))
 			case "POST":
 				// Call ParseForm() to parse the raw query and update r.PostForm and r.Form.

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -111,10 +112,11 @@ func main() {
 			currentHumidity := lib.GetCurrentHumidity()
 
 			log.Println("current temperature:", currentTemperature, "current humidity:", currentHumidity)
-			fmt.Fprintln(w, map[string]float64{
+			response, _ := json.Marshal(map[string]float64{
 				"temperature": currentTemperature,
 				"humidity":    currentHumidity,
 			})
+			fmt.Fprintln(w, string(response))
 			return
 		} else if idealTemperatureHumidity == "true" {
 			switch r.Method {

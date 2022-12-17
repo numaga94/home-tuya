@@ -123,9 +123,15 @@ func main() {
 			case "GET":
 				currentTemperature := lib.GetCurrentTemperature()
 				currentHumidity := lib.GetCurrentHumidity()
+				response, _ := json.Marshal(map[string]float64{
+					"ideal_temperature":   idealTemperature,
+					"ideal_humidity":      idealHumidity,
+					"current_temperature": currentTemperature,
+					"current_humidity":    currentHumidity,
+				})
 				responseText := fmt.Sprintf("ideal: %.1f degrees, %.1f %%H and current: %.1f degrees, %.1f %%H", idealTemperature, idealHumidity, currentTemperature, currentHumidity)
 				log.Println(responseText)
-				fmt.Fprintln(w, responseText)
+				fmt.Fprintln(w, string(response))
 			case "POST":
 				// Call ParseForm() to parse the raw query and update r.PostForm and r.Form.
 				if err := r.ParseForm(); err != nil {
@@ -141,13 +147,18 @@ func main() {
 				if idealH, err := strconv.ParseFloat(humidity, 64); err == nil {
 					idealHumidity = idealH
 				}
+
+				response, _ := json.Marshal(map[string]float64{
+					"ideal_temperature": idealTemperature,
+					"ideal_humidity":    idealHumidity,
+				})
 				responseText := fmt.Sprintf("change ideal temperature to %.1f degrees and ideal humidity to %.1f %%H", idealTemperature, idealHumidity)
 				log.Println(responseText)
-				fmt.Fprintln(w, responseText)
+				fmt.Fprintln(w, string(response))
 			default:
 				responseText := fmt.Sprintln("sorry, only GET and POST methods are supported.")
 				log.Println(responseText)
-				fmt.Fprintln(w, responseText)
+				http.Error(w, responseText, http.StatusUnauthorized)
 			}
 			return
 		} else if openHours == "true" {
@@ -155,6 +166,7 @@ func main() {
 			case "GET":
 				responseText := fmt.Sprintf("current open hours is between %d and %d.", openHoursBegin, openHoursEnd)
 				log.Println(responseText)
+
 				fmt.Fprintln(w, responseText)
 			case "POST":
 				// Call ParseForm() to parse the raw query and update r.PostForm and r.Form.
@@ -169,11 +181,16 @@ func main() {
 				openHoursEnd, _ = strconv.Atoi(end)
 				responseText := fmt.Sprintf("change opens hours into between %d and %d.", openHoursBegin, openHoursEnd)
 				log.Println(responseText)
-				fmt.Fprintln(w, responseText)
+
+				response, _ := json.Marshal(map[string]int{
+					"open_hours_begin": openHoursBegin,
+					"open_hours_end":   openHoursEnd,
+				})
+				fmt.Fprintln(w, string(response))
 			default:
 				responseText := fmt.Sprintln("sorry, only GET and POST methods are supported.")
 				log.Println(responseText)
-				fmt.Fprintln(w, responseText)
+				http.Error(w, responseText, http.StatusUnauthorized)
 			}
 			return
 		} else {
